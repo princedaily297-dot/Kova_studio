@@ -158,6 +158,21 @@
       color: #67e8f9;
     }
 
+    .controls-bar {
+      margin-bottom: 12px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .controls-bar select {
+      width: auto;
+      margin-bottom: 0;
+      padding: 9px 12px;
+      font-size: 13px;
+    }
+
     .scenes {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -211,7 +226,7 @@
         <div class="title">KovaStudio AI</div>
         <div class="sub">kova_tech and innovation</div>
       </div>
-      <div class="credits">⚡ <span id="cr-num">15</span> Credits</div>
+      <div class="credits">⚡ <span id="cr-num">Unlimited</span></div>
     </div>
 
     <div class="box">
@@ -246,21 +261,34 @@
         <option value="5">5 Scenes</option>
       </select>
 
-      <button type="button" class="btn-cyan" onclick="makeScenes()">Generate Scenes (2 Credits)</button>
+      <button type="button" class="btn-cyan" onclick="makeScenes()">Generate Scenes (No Limit)</button>
       <div id="status-msg" class="status-bar"></div>
     </div>
 
     <div id="out-box" class="box" style="display:none;">
-      <h2>Step 3: Generated Scenes</h2>
+      <h2>Step 3: Generated Scenes &amp; Video Sequence</h2>
+
+      <div class="controls-bar">
+        <select id="funny-voice">
+          <option value="chipmunk">Funny: Chipmunk / Squeaky</option>
+          <option value="goofy">Funny: Goofy / Hyper</option>
+          <option value="deep_boss">Funny: Deep Boss</option>
+          <option value="normal">Normal Voice</option>
+        </select>
+        <button type="button" class="btn-dark" onclick="playFullVideoSequence()">Play Full Video</button>
+        <button type="button" class="btn-dark" onclick="stopFullVideoSequence()">Stop</button>
+      </div>
+
       <div id="scenes-list" class="scenes"></div>
     </div>
   </div>
 
   <script>
-    var credits = 15;
     var cast = [];
     var activeId = null;
     var scenes = [];
+    var isPlayingVideo = false;
+    var videoTimer = null;
 
     function setStatus(msg) {
       var el = document.getElementById("status-msg");
@@ -269,14 +297,50 @@
 
     function updateCredits() {
       var el = document.getElementById("cr-num");
-      if (el) el.textContent = credits;
+      if (el) el.textContent = "Unlimited";
     }
 
     function makeFallbackImg(title, sub) {
       var t = String(title || "Scene").replace(/[<>&"]/g, "");
-      var s = String(sub || "KovaStudio AI").slice(0, 32).replace(/[<>&"]/g, "");
+      var s = String(sub || "KovaStudio AI").slice(0, 34).replace(/[<>&"]/g, "");
       var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="720" height="1120" viewBox="0 0 720 1120"><rect width="720" height="1120" fill="#13192c"/><circle cx="360" cy="430" r="120" fill="#7c3aed" opacity="0.3"/><text x="360" y="452" text-anchor="middle" fill="#fff" font-family="sans-serif" font-size="64" font-weight="bold">' + (t.charAt(0) || "K") + '</text><text x="360" y="620" text-anchor="middle" fill="#fff" font-family="sans-serif" font-size="32" font-weight="bold">' + t + '</text><text x="360" y="665" text-anchor="middle" fill="#67e8f9" font-family="sans-serif" font-size="20">' + s + '</text></svg>';
       return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
+    }
+
+    function getFunnyVoiceSettings() {
+      var modeEl = document.getElementById("funny-voice");
+      var mode = modeEl ? modeEl.value : "chipmunk";
+      if (mode === "chipmunk") return { pitch: 1.85, rate: 1.35 };
+      if (mode === "deep_boss") return { pitch: 0.45, rate: 0.9 };
+      if (mode === "goofy") return { pitch: 1.45, rate: 1.15 };
+      return { pitch: 1.0, rate: 1.05 };
+    }
+
+    function speakFunny(txt, onDone) {
+      if (!("speechSynthesis" in window)) {
+        if (onDone) videoTimer = setTimeout(onDone, 2600);
+        return;
+      }
+      try {
+        window.speechSynthesis.cancel();
+        var utter = new SpeechSynthesisUtterance(txt);
+        var cfg = getFunnyVoiceSettings();
+        utter.pitch = cfg.pitch;
+        utter.rate = cfg.rate;
+
+        var voices = window.speechSynthesis.getVoices ? window.speechSynthesis.getVoices() : [];
+        if (voices && voices.length > 0) {
+          utter.voice = voices[0];
+        }
+
+        if (onDone) {
+          utter.onend = onDone;
+          utter.onerror = onDone;
+        }
+        window.speechSynthesis.speak(utter);
+      } catch (e) {
+        if (onDone) videoTimer = setTimeout(onDone, 2600);
+      }
     }
 
     function saveChar() {
@@ -339,10 +403,6 @@
         setStatus("Write your story in Step 2 first.");
         return;
       }
-      if (credits < 2) {
-        setStatus("Not enough credits.");
-        return;
-      }
 
       var parts = story.replace(/\s+/g, " ").split(/[.!?]+/).map(function (s) {
         return s.trim();
@@ -351,23 +411,54 @@
       scenes = [];
       for (var i = 0; i < count; i++) {
         var line = parts.length ? parts[Math.min(parts.length - 1, Math.floor((i / count) * parts.length))] : story;
-        var prompt = ch.name + ", " + ch.look + ", " + line + ", " + ch.style;
-        var url = "https://image.pollinations.ai/prompt/" + encodeURIComponent(prompt.slice(0, 260)) + "?width=720&height=1120&seed=" + (ch.seed + i) + "&nologo=true";
+        var prompt = ch.name + ", " + ch.look + ", " + line + ", " + ch.style + ", safe family friendly portrait, fully clothed";
+        var url = "https://image.pollinations.ai/prompt/" + encodeURIComponent(prompt.slice(0, 260)) + "?width=720&height=1120&seed=" + (ch.seed + i) + "&nologo=true&safe=true";
         scenes.push({ num: i + 1, line: line, prompt: prompt, url: url, charName: ch.name });
       }
 
-      credits -= 2;
       updateCredits();
       renderScenes();
-      setStatus("Generated " + scenes.length + " scenes.");
+      setStatus("Generated " + scenes.length + " scenes (0 limit).");
     }
 
-    function speakText(txt) {
+    function playFullVideoSequence() {
+      if (!scenes.length) {
+        setStatus("Generate scenes first.");
+        return;
+      }
+      stopFullVideoSequence();
+      isPlayingVideo = true;
+      var idx = 0;
+
+      function nextScene() {
+        if (!isPlayingVideo) return;
+        if (idx >= scenes.length) {
+          isPlayingVideo = false;
+          setStatus("Finished playing full video sequence.");
+          return;
+        }
+        var sc = scenes[idx];
+        var cardEl = document.getElementById("scene-card-" + idx);
+        if (cardEl && cardEl.scrollIntoView) {
+          cardEl.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+        setStatus("Playing Scene " + sc.num + " of " + scenes.length + "...");
+        speakFunny(sc.line, function () {
+          idx += 1;
+          if (isPlayingVideo) {
+            videoTimer = setTimeout(nextScene, 400);
+          }
+        });
+      }
+
+      nextScene();
+    }
+
+    function stopFullVideoSequence() {
+      isPlayingVideo = false;
+      clearTimeout(videoTimer);
       if ("speechSynthesis" in window) {
-        try {
-          window.speechSynthesis.cancel();
-          window.speechSynthesis.speak(new SpeechSynthesisUtterance(txt));
-        } catch (e) {}
+        try { window.speechSynthesis.cancel(); } catch (e) {}
       }
     }
 
@@ -377,9 +468,10 @@
       outBox.style.display = "block";
       list.innerHTML = "";
 
-      scenes.forEach(function (sc) {
+      scenes.forEach(function (sc, idx) {
         var card = document.createElement("div");
         card.className = "scene-box";
+        card.id = "scene-card-" + idx;
 
         var img = document.createElement("img");
         img.alt = "Scene " + sc.num;
@@ -400,8 +492,8 @@
         var btn = document.createElement("button");
         btn.type = "button";
         btn.className = "btn-dark";
-        btn.textContent = "Speak Line";
-        btn.onclick = function () { speakText(sc.line); };
+        btn.textContent = "Speak Funny";
+        btn.onclick = function () { speakFunny(sc.line, null); };
 
         card.appendChild(img);
         card.appendChild(lineEl);
@@ -410,6 +502,8 @@
         list.appendChild(card);
       });
     }
+
+    updateCredits();
   </script>
 </body>
 </html>
