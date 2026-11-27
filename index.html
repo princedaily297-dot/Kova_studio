@@ -2,506 +2,414 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>KovaStudio AI — Character Story & Reel Studio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KovaStudio AI — Character Story Studio</title>
   <style>
-    :root {
-      --bg-dark: #07080d;
-      --bg-card: rgba(17, 21, 34, 0.9);
-      --border-subtle: rgba(255, 255, 255, 0.12);
-      --border-active: rgba(139, 92, 246, 0.7);
-      --purple: #8b5cf6;
-      --purple-deep: #6d28d9;
-      --cyan: #06b6d4;
-      --gold: #f59e0b;
-      --text-primary: #f8fafc;
-      --text-secondary: #94a3b8;
-      --radius-lg: 18px;
-      --radius-md: 12px;
-    }
-
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    html, body {
-      background-color: var(--bg-dark);
-      color: var(--text-primary);
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      min-height: 100vh;
-      overflow-x: hidden;
-      line-height: 1.45;
-      padding-bottom: 80px;
-    }
-
-    #splash-screen {
-      position: fixed;
-      inset: 0;
-      z-index: 99999;
-      background: #05060b;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      text-align: center;
-      cursor: pointer;
       touch-action: manipulation;
     }
 
-    #splash-screen.hidden-splash {
-      display: none !important;
+    body {
+      background: #07080d;
+      color: #f8fafc;
+      font-family: system-ui, -apple-system, sans-serif;
+      padding: 16px 16px 80px 16px;
+      line-height: 1.45;
     }
 
-    .orbit-box {
-      position: relative;
-      width: 100px;
-      height: 100px;
+    .wrap {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .header {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      justify-content: center;
-      margin-bottom: 18px;
+      background: #111522;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
     }
 
-    .ring-outer {
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      border: 2.5px solid transparent;
-      border-top-color: var(--purple);
-      border-right-color: var(--cyan);
-      animation: spin360 1.4s linear infinite;
-    }
-
-    .ring-inner {
-      position: absolute;
-      inset: 14px;
-      border-radius: 50%;
-      border: 2.5px solid transparent;
-      border-bottom-color: var(--gold);
-      border-left-color: var(--purple);
-      animation: spinRev 2s linear infinite;
-    }
-
-    .logo-badge {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, var(--purple), var(--cyan));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 21px;
+    .title {
+      font-size: 18px;
       font-weight: 800;
-      color: #fff;
     }
 
-    @keyframes spin360 { to { transform: rotate(360deg); } }
-    @keyframes spinRev { to { transform: rotate(-360deg); } }
-
-    .splash-title {
-      font-size: 25px;
-      font-weight: 800;
-      color: #ffffff;
+    .sub {
+      font-size: 12px;
+      color: #94a3b8;
     }
 
-    .splash-brand {
-      margin-top: 6px;
-      font-size: 11px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--text-secondary);
-    }
-
-    .splash-skip-btn {
-      margin-top: 22px;
-      background: rgba(139, 92, 246, 0.22);
-      border: 1px solid var(--border-active);
-      color: #ede9fe;
-      padding: 10px 18px;
+    .credits {
+      background: rgba(245, 158, 11, 0.18);
+      border: 1px solid rgba(245, 158, 11, 0.45);
+      color: #fde68a;
+      padding: 6px 12px;
       border-radius: 999px;
       font-size: 13px;
+      font-weight: 700;
+    }
+
+    .box {
+      background: #111522;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .box h2 {
+      font-size: 16px;
+      margin-bottom: 12px;
+      color: #e2e8f0;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
       font-weight: 600;
+      color: #94a3b8;
+      margin-bottom: 6px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      background: #080b12;
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 10px;
+      padding: 12px;
+      color: #ffffff;
+      font-size: 15px;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    button {
+      width: 100%;
+      padding: 13px 16px;
+      border: none;
+      border-radius: 11px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #ffffff;
       cursor: pointer;
+      display: block;
     }
 
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 100;
+    .btn-purple {
+      background: #7c3aed;
+    }
+
+    .btn-cyan {
+      background: #0284c7;
+    }
+
+    .btn-dark {
+      background: #1e293b;
+      border: 1px solid rgba(255,255,255,0.14);
+      padding: 9px 12px;
+      font-size: 13px;
+      width: auto;
+      display: inline-block;
+    }
+
+    .cast-list {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 16px;
-      background: rgba(7, 8, 13, 0.92);
-      border-bottom: 1px solid var(--border-subtle);
+      gap: 10px;
+      overflow-x: auto;
+      margin-top: 12px;
+      padding-bottom: 6px;
     }
 
-    .brand-group { display: flex; align-items: center; gap: 10px; }
-    .brand-icon {
-      width: 34px; height: 34px; border-radius: 10px;
-      background: linear-gradient(135deg, var(--purple), var(--cyan));
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 800; font-size: 17px; color: #fff;
-    }
-    .brand-names h1 { font-size: 16px; font-weight: 700; }
-    .brand-names p { font-size: 11px; color: var(--text-secondary); }
-
-    .top-controls { display: flex; align-items: center; gap: 8px; }
-    .credits-chip {
-      padding: 6px 11px; border-radius: 999px;
-      background: rgba(245, 158, 11, 0.16);
-      border: 1px solid rgba(245, 158, 11, 0.35);
-      color: #fde68a; font-size: 12px; font-weight: 700;
-    }
-    .icon-action {
-      width: 36px; height: 36px; border-radius: 10px;
-      border: 1px solid var(--border-subtle);
-      background: var(--bg-card); color: #fff; font-size: 16px; cursor: pointer;
+    .cast-item {
+      min-width: 140px;
+      background: #0b0f1a;
+      border: 2px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      padding: 10px;
+      cursor: pointer;
+      flex-shrink: 0;
     }
 
-    .workspace {
-      max-width: 900px; margin: 0 auto; padding: 16px;
-      display: flex; flex-direction: column; gap: 16px;
+    .cast-item.active {
+      border-color: #8b5cf6;
     }
 
-    .card {
-      background: var(--bg-card); border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg); padding: 16px;
+    .cast-item strong {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 4px;
     }
 
-    .card-header {
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 8px; margin-bottom: 12px; flex-wrap: wrap;
+    .cast-item span {
+      display: block;
+      font-size: 11px;
+      color: #67e8f9;
     }
 
-    .step-pill {
-      background: rgba(139, 92, 246, 0.22); border: 1px solid var(--border-active);
-      color: #ddd6fe; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px;
+    .scenes {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
     }
 
-    .card-title { font-size: 16px; font-weight: 700; display: inline; margin-left: 6px; }
-    .card-hint { font-size: 12px; color: var(--text-secondary); }
-
-    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    @media (max-width: 620px) { .two-col { grid-template-columns: 1fr; } }
-
-    .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
-    .field label { font-size: 12px; font-weight: 600; color: var(--text-secondary); }
-    .field input, .field select, .field textarea {
-      width: 100%; background: #090c14; border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md); padding: 11px 13px; color: #fff; font-family: inherit; font-size: 14px;
-    }
-    .field textarea { min-height: 82px; resize: vertical; }
-
-    .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-      border: none; border-radius: var(--radius-md); padding: 12px 16px;
-      font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
-    }
-    .btn-full { width: 100%; }
-    .btn-purple { background: linear-gradient(135deg, var(--purple), var(--purple-deep)); color: #fff; }
-    .btn-cyan { background: linear-gradient(135deg, var(--cyan), #0284c7); color: #fff; }
-    .btn-secondary { background: rgba(255,255,255,0.08); border: 1px solid var(--border-subtle); color: #fff; padding: 9px 12px; font-size: 12px; }
-
-    .cast-section { margin-top: 14px; display: none; }
-    .cast-row { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; }
-    .cast-card {
-      position: relative; flex: 0 0 138px; background: #0b0e18;
-      border: 1.5px solid var(--border-subtle); border-radius: 12px; padding: 8px; cursor: pointer;
-    }
-    .cast-card.selected { border-color: var(--purple); }
-    .cast-thumb { width: 100%; height: 115px; object-fit: cover; border-radius: 8px; background: #14192b; display: block; }
-    .cast-name { margin-top: 6px; font-size: 13px; font-weight: 700; }
-    .cast-style { font-size: 10px; color: #67e8f9; }
-    .cast-remove {
-      position: absolute; top: 10px; right: 10px; width: 22px; height: 22px;
-      border-radius: 50%; border: none; background: rgba(0,0,0,0.75); color: #fff; cursor: pointer;
+    .scene-box {
+      background: #0b0f1a;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      padding: 12px;
     }
 
-    #storyboard-card { display: none; }
-    .scene-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
-    .scene-card { background: #0b0e18; border: 1px solid var(--border-subtle); border-radius: 14px; overflow: hidden; }
-    .scene-stage { position: relative; width: 100%; aspect-ratio: 9 / 14; background: #090c16; }
-    .scene-stage img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .scene-tag {
-      position: absolute; top: 10px; left: 10px; background: rgba(7,8,13,0.85);
-      padding: 4px 8px; border-radius: 7px; font-size: 11px; font-weight: 700;
-    }
-    .scene-subtitle {
-      position: absolute; left: 10px; right: 10px; bottom: 10px;
-      background: rgba(0,0,0,0.78); padding: 8px; border-radius: 10px;
-      font-size: 12px; font-weight: 600; text-align: center;
-    }
-    .scene-footer { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
-    .scene-prompt-preview { font-size: 11px; color: var(--text-secondary); }
-    .scene-btns { display: flex; gap: 8px; }
-    .scene-btns .btn { flex: 1; }
-
-    .modal-overlay {
-      position: fixed; inset: 0; z-index: 600; background: rgba(0,0,0,0.86);
-      display: none; align-items: center; justify-content: center; padding: 16px;
-    }
-    .modal-overlay.open { display: flex; }
-    .modal-panel {
-      width: 100%; max-width: 390px; background: #101422;
-      border: 1px solid var(--border-subtle); border-radius: 18px; padding: 16px;
-    }
-    .reel-screen {
-      position: relative; width: 100%; aspect-ratio: 9 / 16; max-height: 64vh;
-      border-radius: 14px; overflow: hidden; background: #000;
-    }
-    .reel-screen img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .reel-caption {
-      position: absolute; left: 12px; right: 12px; bottom: 36px;
-      background: rgba(0,0,0,0.76); padding: 8px 10px; border-radius: 10px;
-      text-align: center; font-size: 14px; font-weight: 700;
+    .scene-box img {
+      width: 100%;
+      aspect-ratio: 9 / 14;
+      object-fit: cover;
+      border-radius: 10px;
+      background: #161d31;
+      display: block;
+      margin-bottom: 10px;
     }
 
-    .toast {
-      position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
-      z-index: 950; background: #1e253d; border: 1px solid var(--border-active);
-      color: #fff; padding: 9px 15px; border-radius: 999px; font-size: 12px; display: none;
+    .scene-line {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #f8fafc;
     }
-    .toast.show { display: block; }
+
+    .scene-prompt {
+      font-size: 11px;
+      color: #94a3b8;
+      margin-bottom: 10px;
+      word-break: break-word;
+    }
+
+    .status-bar {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #67e8f9;
+      min-height: 20px;
+    }
   </style>
 </head>
 <body>
-
-  <div id="splash-screen" onclick="closeSplashNow()">
-    <div class="orbit-box">
-      <div class="ring-outer"></div>
-      <div class="ring-inner"></div>
-      <div class="logo-badge">K</div>
+  <div class="wrap">
+    <div class="header">
+      <div>
+        <div class="title">KovaStudio AI</div>
+        <div class="sub">kova_tech and innovation</div>
+      </div>
+      <div class="credits">⚡ <span id="cr-num">15</span> Credits</div>
     </div>
-    <div class="splash-title">KovaStudio AI</div>
-    <div class="splash-brand">kova_tech and innovation</div>
-    <button type="button" class="splash-skip-btn" onclick="event.stopPropagation(); closeSplashNow();">
-      Tap anywhere to enter
-    </button>
-  </div>
 
-  <header class="topbar">
-    <div class="brand-group">
-      <div class="brand-icon">K</div>
-      <div class="brand-names">
-        <h1>KovaStudio AI</h1>
-        <p>Character Story Studio</p>
-      </div>
+    <div class="box">
+      <h2>Step 1: Create Character</h2>
+      <label for="c-name">Character Name</label>
+      <input id="c-name" type="text" placeholder="e.g. Tunde" />
+
+      <label for="c-style">Art Style</label>
+      <select id="c-style">
+        <option value="3D Pixar animation style">3D Pixar Animation</option>
+        <option value="Modern anime style">Modern Anime</option>
+        <option value="Cinematic film style">Cinematic Film</option>
+        <option value="Cyberpunk neon style">Cyberpunk Neon</option>
+      </select>
+
+      <label for="c-look">How Character Looks</label>
+      <textarea id="c-look" placeholder="e.g. 22yo guy, low fade, glasses, black hoodie, silver chain"></textarea>
+
+      <button type="button" class="btn-purple" onclick="saveChar()">Save Character</button>
+      <div id="cast-box" class="cast-list"></div>
     </div>
-    <div class="top-controls">
-      <div class="credits-chip">⚡ <span id="credits-display">15</span> Cr</div>
-      <button type="button" class="icon-action" onclick="openModal('settings-modal')">⚙️</button>
+
+    <div class="box">
+      <h2>Step 2: Story to Scenes</h2>
+      <label for="s-text">Your Story</label>
+      <textarea id="s-text" placeholder="Write your story here..."></textarea>
+
+      <label for="s-count">Number of Scenes</label>
+      <select id="s-count">
+        <option value="3">3 Scenes</option>
+        <option value="4" selected>4 Scenes</option>
+        <option value="5">5 Scenes</option>
+      </select>
+
+      <button type="button" class="btn-cyan" onclick="makeScenes()">Generate Scenes (2 Credits)</button>
+      <div id="status-msg" class="status-bar"></div>
     </div>
-  </header>
 
-  <main class="workspace">
-    <section class="card">
-      <div class="card-header">
-        <div><span class="step-pill">STEP 1</span><h2 class="card-title">Character Studio (Cast)</h2></div>
-        <span class="card-hint">Create &amp; lock your character</span>
-      </div>
-      <div class="two-col">
-        <div class="field">
-          <label for="char-name">Character Name</label>
-          <input id="char-name" type="text" placeholder="e.g. Tunde, Zara, Kael" />
-        </div>
-        <div class="field">
-          <label for="char-style">Visual Style</label>
-          <select id="char-style">
-            <option value="3D Pixar animation style, expressive face, vibrant lighting">3D Pixar Animation</option>
-            <option value="Modern anime style, crisp lineart, dramatic lighting">Modern Anime</option>
-            <option value="Cinematic film still, 35mm lens, dramatic lighting">Cinematic Film</option>
-            <option value="Cyberpunk neon style, moody night lights">Cyberpunk Neon</option>
-          </select>
-        </div>
-      </div>
-      <div class="field">
-        <label for="char-appearance">How Your Character Looks</label>
-        <textarea id="char-appearance" placeholder="e.g. 22-year-old young man with short fade hair, round glasses, black hoodie, silver chain"></textarea>
-      </div>
-      <button type="button" class="btn btn-purple btn-full" onclick="addCharacterToCast()">
-        ✨ Save &amp; Lock Character in Cast
-      </button>
-
-      <div id="cast-section" class="cast-section">
-        <div class="field" style="margin-bottom:6px;"><label>Tap a Character to Use:</label></div>
-        <div id="cast-row" class="cast-row"></div>
-      </div>
-    </section>
-
-    <section class="card">
-      <div class="card-header">
-        <div><span class="step-pill">STEP 2</span><h2 class="card-title">Story-to-Scene Director</h2></div>
-        <span id="selected-char-label" class="card-hint" style="color:#67e8f9; font-weight:600;">No character selected</span>
-      </div>
-      <div class="field">
-        <label for="story-text">Tell Your Story</label>
-        <textarea id="story-text" style="min-height:105px;" placeholder="Write your story here..."></textarea>
-      </div>
-      <div class="two-col">
-        <div class="field">
-          <label for="scene-total">Number of Scenes (9:16)</label>
-          <select id="scene-total">
-            <option value="3">3 Scenes (~15s)</option>
-            <option value="4" selected>4 Scenes (~25s)</option>
-            <option value="5">5 Scenes (~35s)</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="voice-speed">Voiceover Pace</label>
-          <select id="voice-speed">
-            <option value="0.92">Slow (0.92x)</option>
-            <option value="1.0">Normal (1.0x)</option>
-            <option value="1.12" selected>Fast TikTok (1.12x)</option>
-          </select>
-        </div>
-      </div>
-      <button type="button" id="btn-build-story" class="btn btn-cyan btn-full" onclick="buildStoryboard()">
-        🎬 Generate Storyboard (2 Credits)
-      </button>
-    </section>
-
-    <section id="storyboard-card" class="card">
-      <div class="card-header">
-        <div><span class="step-pill">STEP 3</span><h2 class="card-title">9:16 Storyboard</h2></div>
-        <button type="button" class="btn btn-secondary" onclick="startReelPreview()">▶️ Play Reel</button>
-      </div>
-      <div id="scene-grid" class="scene-grid"></div>
-      <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
-        <button type="button" class="btn btn-purple" style="flex:1; min-width:200px;" onclick="startReelPreview()">
-          📱 Open 9:16 Reel Preview + Voice
-        </button>
-        <button type="button" class="btn btn-secondary" onclick="copyStoryboardScript()">
-          📋 Copy Script &amp; Prompts
-        </button>
-      </div>
-    </section>
-  </main>
-
-  <div id="settings-modal" class="modal-overlay">
-    <div class="modal-panel">
-      <div class="card-header">
-        <h3 class="card-title" style="margin-left:0;">⚙️ Studio Settings</h3>
-        <button type="button" class="icon-action" onclick="closeModal('settings-modal')">✕</button>
-      </div>
-      <div class="field">
-        <label for="gemini-key">Gemini API Key (Optional)</label>
-        <input id="gemini-key" type="password" placeholder="AIzaSy..." />
-      </div>
-      <div style="display:flex; gap:8px;">
-        <button type="button" class="btn btn-purple" style="flex:1;" onclick="saveApiKey()">Save Key</button>
-        <button type="button" class="btn btn-secondary" onclick="addTestCredits()">+10 Credits</button>
-      </div>
+    <div id="out-box" class="box" style="display:none;">
+      <h2>Step 3: Generated Scenes</h2>
+      <div id="scenes-list" class="scenes"></div>
     </div>
   </div>
-
-  <div id="reel-modal" class="modal-overlay">
-    <div class="modal-panel">
-      <div class="card-header">
-        <h3 class="card-title" style="margin-left:0;">📱 9:16 Reel Preview</h3>
-        <button type="button" class="icon-action" onclick="stopReelPreview()">✕</button>
-      </div>
-      <div class="reel-screen">
-        <img id="reel-image" alt="Reel frame" />
-        <div id="reel-subtitle" class="reel-caption">Starting...</div>
-      </div>
-      <div style="margin-top:10px; display:flex; gap:8px;">
-        <button type="button" class="btn btn-cyan" style="flex:1;" onclick="runReelSlides()">🔄 Replay</button>
-        <button type="button" class="btn btn-secondary" onclick="stopReelPreview()">Close</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="toast" class="toast"></div>
 
   <script>
-    function closeSplashNow() {
-      var el = document.getElementById("splash-screen");
-      if (el) el.classList.add("hidden-splash");
-    }
-    setTimeout(closeSplashNow, 1500);
+    var credits = 15;
+    var cast = [];
+    var activeId = null;
+    var scenes = [];
 
-    var state = { credits: 15, cast: [], selectedCharId: null, scenes: [] };
-    var reelTimer = null;
-
-    function getStore(k, d) {
-      try { var v = localStorage.getItem(k); return v !== null ? v : d; } catch (e) { return d; }
-    }
-    function setStore(k, v) {
-      try { localStorage.setItem(k, String(v)); } catch (e) {}
+    function setStatus(msg) {
+      var el = document.getElementById("status-msg");
+      if (el) el.textContent = msg;
     }
 
-    function showToast(msg) {
-      var t = document.getElementById("toast");
-      if (!t) return;
-      t.textContent = msg;
-      t.classList.add("show");
-      setTimeout(function () { t.classList.remove("show"); }, 2500);
+    function updateCredits() {
+      var el = document.getElementById("cr-num");
+      if (el) el.textContent = credits;
     }
 
-    state.credits = parseInt(getStore("kova_cr", "15"), 10) || 15;
-    try { state.cast = JSON.parse(getStore("kova_cast_v2", "[]")) || []; } catch (e) { state.cast = []; }
-    state.selectedCharId = getStore("kova_sel_v2", null);
-
-    function renderCredits() {
-      var el = document.getElementById("credits-display");
-      if (el) el.textContent = state.credits;
-      setStore("kova_cr", state.credits);
-    }
-    function addTestCredits() { state.credits += 10; renderCredits(); showToast("⚡ +10 Credits"); }
-    function openModal(id) { var m = document.getElementById(id); if (m) m.classList.add("open"); }
-    function closeModal(id) { var m = document.getElementById(id); if (m) m.classList.remove("open"); }
-    function saveApiKey() {
-      var k = document.getElementById("gemini-key").value.trim();
-      setStore("kova_gem_key", k);
-      closeModal("settings-modal");
-      showToast(k ? "✅ API key saved" : "Saved");
-    }
-
-    function makeSvgFallback(title, sub) {
-      var t = String(title || "KovaStudio").slice(0, 22).replace(/[<>&"]/g, "");
-      var s = String(sub || "Scene").slice(0, 32).replace(/[<>&"]/g, "");
-      var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="720" height="1152" viewBox="0 0 720 1152"><rect width="720" height="1152" fill="#13192b"/><circle cx="360" cy="450" r="130" fill="#8b5cf6" opacity="0.25"/><text x="360" y="472" text-anchor="middle" fill="#fff" font-family="sans-serif" font-size="60" font-weight="bold">' + (t.charAt(0) || "K") + '</text><text x="360" y="650" text-anchor="middle" fill="#fff" font-family="sans-serif" font-size="30" font-weight="bold">' + t + '</text><text x="360" y="695" text-anchor="middle" fill="#67e8f9" font-family="sans-serif" font-size="18">' + s + '</text></svg>';
+    function makeFallbackImg(title, sub) {
+      var t = String(title || "Scene").replace(/[<>&"]/g, "");
+      var s = String(sub || "KovaStudio AI").slice(0, 32).replace(/[<>&"]/g, "");
+      var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="720" height="1120" viewBox="0 0 720 1120"><rect width="720" height="1120" fill="#13192c"/><circle cx="360" cy="430" r="120" fill="#7c3aed" opacity="0.3"/><text x="360" y="452" text-anchor="middle" fill="#fff" font-family="sans-serif" font-size="64" font-weight="bold">' + (t.charAt(0) || "K") + '</text><text x="360" y="620" text-anchor="middle" fill="#fff" font-family="sans-serif" font-size="32" font-weight="bold">' + t + '</text><text x="360" y="665" text-anchor="middle" fill="#67e8f9" font-family="sans-serif" font-size="20">' + s + '</text></svg>';
       return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
     }
 
-    function imgUrl(prompt, seed, w, h) {
-      return "https://image.pollinations.ai/prompt/" + encodeURIComponent(String(prompt).slice(0, 280)) + "?width=" + (w || 720) + "&height=" + (h || 1152) + "&seed=" + seed + "&nologo=true";
-    }
+    function saveChar() {
+      var name = document.getElementById("c-name").value.trim();
+      var style = document.getElementById("c-style").value;
+      var look = document.getElementById("c-look").value.trim();
 
-    function setSafeImg(img, url, title, sub) {
-      delete img.dataset.fb;
-      img.onerror = function () {
-        if (!img.dataset.fb) { img.dataset.fb = "1"; img.src = makeSvgFallback(title, sub); }
-      };
-      img.src = url;
-    }
+      if (!name || !look) {
+        setStatus("Enter both character name and how they look.");
+        return;
+      }
 
-    function addCharacterToCast() {
-      var name = document.getElementById("char-name").value.trim();
-      var style = document.getElementById("char-style").value;
-      var desc = document.getElementById("char-appearance").value.trim();
-      if (!name || !desc) { showToast("⚠️ Enter character name and look"); return; }
-
-      var seed = Math.floor(100000 + Math.random() * 900000);
-      var obj = {
-        id: "c_" + Date.now(),
+      var item = {
+        id: String(Date.now()),
         name: name,
         style: style,
-        description: desc,
-        seed: seed,
-        avatarUrl: imgUrl(name + ", " + desc + ", " + style, seed, 512, 512)
+        look: look,
+        seed: Math.floor(10000 + Math.random() * 90000)
       };
-      state.cast.unshift(obj);
-      state.selectedCharId = obj.id;
-      setStore("kova_cast_v2", JSON.stringify(state.cast));
-      setStore("kova_sel_v2", obj.id);
+
+      cast.unshift(item);
+      activeId = item.id;
       renderCast();
-      showToast("✨ " + name + " saved");
+      setStatus("Saved character: " + name);
     }
 
-    
+    function renderCast() {
+      var box = document.getElementById("cast-box");
+      box.innerHTML = "";
+      cast.forEach(function (c) {
+        var div = document.createElement("div");
+        div.className = "cast-item" + (c.id === activeId ? " active" : "");
+        div.onclick = function () {
+          activeId = c.id;
+          renderCast();
+          setStatus("Selected: " + c.name);
+        };
+        div.innerHTML = "<strong>" + c.name + "</strong><span>" + c.style + "</span>";
+        box.appendChild(div);
+      });
+    }
+
+    function getActiveChar() {
+      for (var i = 0; i < cast.length; i++) {
+        if (cast[i].id === activeId) return cast[i];
+      }
+      return cast[0] || null;
+    }
+
+    function makeScenes() {
+      var ch = getActiveChar();
+      var story = document.getElementById("s-text").value.trim();
+      var count = parseInt(document.getElementById("s-count").value, 10) || 4;
+
+      if (!ch) {
+        setStatus("Create a character in Step 1 first.");
+        return;
+      }
+      if (!story) {
+        setStatus("Write your story in Step 2 first.");
+        return;
+      }
+      if (credits < 2) {
+        setStatus("Not enough credits.");
+        return;
+      }
+
+      var parts = story.replace(/\s+/g, " ").split(/[.!?]+/).map(function (s) {
+        return s.trim();
+      }).filter(Boolean);
+
+      scenes = [];
+      for (var i = 0; i < count; i++) {
+        var line = parts.length ? parts[Math.min(parts.length - 1, Math.floor((i / count) * parts.length))] : story;
+        var prompt = ch.name + ", " + ch.look + ", " + line + ", " + ch.style;
+        var url = "https://image.pollinations.ai/prompt/" + encodeURIComponent(prompt.slice(0, 260)) + "?width=720&height=1120&seed=" + (ch.seed + i) + "&nologo=true";
+        scenes.push({ num: i + 1, line: line, prompt: prompt, url: url, charName: ch.name });
+      }
+
+      credits -= 2;
+      updateCredits();
+      renderScenes();
+      setStatus("Generated " + scenes.length + " scenes.");
+    }
+
+    function speakText(txt) {
+      if ("speechSynthesis" in window) {
+        try {
+          window.speechSynthesis.cancel();
+          window.speechSynthesis.speak(new SpeechSynthesisUtterance(txt));
+        } catch (e) {}
+      }
+    }
+
+    function renderScenes() {
+      var outBox = document.getElementById("out-box");
+      var list = document.getElementById("scenes-list");
+      outBox.style.display = "block";
+      list.innerHTML = "";
+
+      scenes.forEach(function (sc) {
+        var card = document.createElement("div");
+        card.className = "scene-box";
+
+        var img = document.createElement("img");
+        img.alt = "Scene " + sc.num;
+        img.onerror = function () {
+          this.onerror = null;
+          this.src = makeFallbackImg(sc.charName + " #" + sc.num, sc.line);
+        };
+        img.src = sc.url;
+
+        var lineEl = document.createElement("div");
+        lineEl.className = "scene-line";
+        lineEl.textContent = "Scene " + sc.num + ": " + sc.line;
+
+        var prEl = document.createElement("div");
+        prEl.className = "scene-prompt";
+        prEl.textContent = sc.prompt;
+
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "btn-dark";
+        btn.textContent = "Speak Line";
+        btn.onclick = function () { speakText(sc.line); };
+
+        card.appendChild(img);
+        card.appendChild(lineEl);
+        card.appendChild(prEl);
+        card.appendChild(btn);
+        list.appendChild(card);
+      });
+    }
+  </script>
+</body>
+</html>
